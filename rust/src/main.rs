@@ -1,5 +1,6 @@
 use std::{env, fs};
 mod day_one;
+mod day_three;
 mod day_two;
 
 // Input is expected to be a txt file with a numeric name eg. "12.txt"
@@ -28,6 +29,10 @@ fn main() {
         Some("2") => {
             let result = day_two::run(&input);
             println!("Day two: {} & {}", result.sum, result.sum_extra);
+        }
+        Some("3") => {
+            let result = day_three::run(&input);
+            println!("Day three: {}", result.total);
         }
         _ => {
             println!("Day '{:?}' not implemented", filename)
