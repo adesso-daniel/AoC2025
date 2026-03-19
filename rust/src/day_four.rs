@@ -8,6 +8,11 @@ pub struct DayResult {
     pub part_two_total: u64,
 }
 
+struct IterationResult {
+    num_accessible_rolls: u64,
+    rows: Vec<Vec<u8>>,
+}
+
 pub fn run(input: &String) -> DayResult {
     let mut result: DayResult = DayResult {
         total: 0,
@@ -16,9 +21,17 @@ pub fn run(input: &String) -> DayResult {
 
     let rows = input_to_vectors(&input);
     let one_result = part_one(rows);
-
-    result.total = one_result as u64;
-
+    result.total = one_result.num_accessible_rolls as u64;
+    result.part_two_total = one_result.num_accessible_rolls as u64;
+    let mut one_result = one_result.rows;
+    loop {
+        let two_result = part_one(one_result);
+        if two_result.num_accessible_rolls == 0 {
+            break;
+        }
+        result.part_two_total += two_result.num_accessible_rolls;
+        one_result = two_result.rows;
+    }
     result
 }
 
@@ -28,7 +41,6 @@ fn string_to_digit_vec(input: &String) -> Vec<u8> {
     for x in input.replace("\r", "").chars().into_iter() {
         let int = match x {
             '@' => ROLL,
-            // '.' => SPACE,
             _ => SPACE,
         };
         result.push(int);
@@ -58,39 +70,47 @@ fn count_surrounding_rolls(roll_surroundings: Vec<u8>) -> u8 {
     sum - 1
 }
 
-fn part_one(rows: Vec<Vec<u8>>) -> u32 {
-    let mut num_accessible_rolls = 0;
+/// Checks the number of accessible rolls and returns a new map with those rolls removed
+fn part_one(rows: Vec<Vec<u8>>) -> IterationResult {
     let num_rows = rows.len();
     let row_width = rows[0].len();
+
+    let mut remaining_rows = rows;
+    let mut num_accessible_rolls = 0;
+
     // skip edge cases for now
     for y in 0..num_rows {
         for x in 0..row_width {
             let x_left_clamped = i16::max(0, x as i16 - 1) as usize;
             let x_right_clamped = usize::min(row_width - 1, x + 1);
-            let current = &rows[y][x_left_clamped..=x_right_clamped];
+            let current = &remaining_rows[y][x_left_clamped..=x_right_clamped];
 
-            if rows[y][x] == SPACE {
+            if remaining_rows[y][x] == SPACE {
                 continue;
             }
             let above = if y as i16 - 1 < 0 {
                 &[0, 0, 0]
             } else {
-                &rows[y - 1][x_left_clamped..=x_right_clamped]
+                &remaining_rows[y - 1][x_left_clamped..=x_right_clamped]
             };
             let below = if y + 1 > num_rows - 1 {
                 &[0, 0, 0]
             } else {
-                &rows[y + 1][x_left_clamped..=x_right_clamped]
+                &remaining_rows[y + 1][x_left_clamped..=x_right_clamped]
             };
             let roll_surroundings = [above, current, below].concat();
             let sum = count_surrounding_rolls(roll_surroundings);
             if sum < 4 {
                 num_accessible_rolls += 1;
+                remaining_rows[y][x] = SPACE;
             }
         }
     }
 
-    num_accessible_rolls
+    IterationResult {
+        num_accessible_rolls,
+        rows: remaining_rows,
+    }
 }
 
 #[cfg(test)]
