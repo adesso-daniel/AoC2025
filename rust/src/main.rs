@@ -1,8 +1,6 @@
 use std::{env, fs};
 
-use rust::day_one;
-use rust::day_three;
-use rust::day_two;
+use rust::{day_four, day_one, day_three, day_two};
 
 // Input is expected to be a txt file with a numeric name eg. "12.txt"
 fn main() {
@@ -37,6 +35,10 @@ fn main() {
                 "Day three normal: {}, override: {}",
                 result.total, result.override_total
             );
+        }
+        Some("4") => {
+            let result = day_four::run(&input);
+            println!("Day four: {} & {}", result.total, result.part_two_total);
         }
         _ => {
             println!("Day '{:?}' not implemented", filename)
