@@ -1,5 +1,3 @@
-use core::num;
-
 const ROLL: u8 = 1;
 const SPACE: u8 = 0;
 
