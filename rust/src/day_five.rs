@@ -4,6 +4,7 @@ use crate::common::parse_range_inclusive;
 
 pub struct DayResult {
     pub total: u64,
+
     pub part_two_total: u64,
 }
 
@@ -40,12 +41,41 @@ fn parse_inputs(input: &String) -> Inputs {
         }
     }
 
+    result.ranges.sort_by(|a, b| a.start().cmp(b.start()));
+
     for number in numbers {
         if number.trim().len() == 0 {
             continue;
         }
         let n = number.parse::<u64>().expect("Should be a number");
         result.numbers.push(n);
+    }
+
+    result
+}
+
+// returns unique ranges. Assumes that input ranges are sorted by `start()`
+fn get_unique_ranges(ranges: &Vec<RangeInclusive<u64>>) -> Vec<RangeInclusive<u64>> {
+    let mut sorted = ranges.clone();
+    sorted.sort_by(|a, b| a.start().cmp(b.start()));
+
+    let mut result: Vec<RangeInclusive<u64>> = vec![];
+    let mut prev: RangeInclusive<u64> = sorted[0].clone();
+
+    result.push(sorted[0].clone());
+
+    for i in 1..sorted.len() {
+        let current = sorted[i].clone();
+        let j = result.len() - 1; // Last inserted range idx
+        if current.start() >= result[j].start() && current.start() <= result[j].end() {
+            let start: u64 = *result[j].start();
+            let end: u64 = u64::max(*prev.end(), *current.end());
+
+            result[j] = start..=end;
+        } else {
+            result.push(current);
+        }
+        prev = result[result.len() - 1].clone();
     }
 
     result
@@ -74,6 +104,15 @@ pub fn run(input: &String) -> DayResult {
         }
     }
 
+    let ranges = get_unique_ranges(&inputs.ranges);
+    println!("Ranges: {:?}", ranges);
+
+    for range in ranges {
+        let num_ingredients = range.end() + 1 - range.start();
+
+        result.part_two_total += num_ingredients;
+    }
+
     result
 }
 
@@ -83,15 +122,23 @@ mod tests {
 
     #[test]
     fn should_parse_input() {
-        let input = "3-5
+        let input = "4-6
+3-5
 
-4"
+4
+5"
         .to_string();
 
         let parsed = parse_inputs(&input);
 
-        assert_eq!(3..=5, parsed.ranges[0]);
-        assert_eq!(4, parsed.numbers[0]);
+        assert_eq!(vec![3..=5, 4..=6], parsed.ranges);
+        assert_eq!(vec![4, 5], parsed.numbers);
+    }
+
+    #[test]
+    fn should_return_unique_ranges() {
+        let ranges = get_unique_ranges(&vec![3..=5, 12..=18, 10..=14]);
+        assert_eq!(vec![3..=5, 10..=18], ranges);
     }
 
     #[test]
@@ -110,5 +157,23 @@ mod tests {
         .to_string();
 
         assert_eq!(3, run(&input).total);
+    }
+
+    #[test]
+    fn should_solve_example_part_two() {
+        let input = "3-5
+10-14
+16-20
+12-18
+
+1
+5
+8
+11
+17
+32"
+        .to_string();
+
+        assert_eq!(14, run(&input).part_two_total);
     }
 }
