@@ -1,6 +1,6 @@
 use std::{env, fs};
 
-use rust::{day_four, day_one, day_three, day_two};
+use aoc2025::{day_five, day_four, day_one, day_three, day_two};
 
 // Input is expected to be a txt file with a numeric name eg. "12.txt"
 fn main() {
@@ -39,6 +39,10 @@ fn main() {
         Some("4") => {
             let result = day_four::run(&input);
             println!("Day four: {} & {}", result.total, result.part_two_total);
+        }
+        Some("5") => {
+            let result = day_five::run(&input);
+            println!("Day five: {} & {}", result.total, result.part_two_total);
         }
         _ => {
             println!("Day '{:?}' not implemented", filename)

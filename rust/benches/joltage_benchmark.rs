@@ -7,14 +7,14 @@ const LENGTHS: [usize; 3] = [20, 50, 100];
 fn do_benchmark_old(input: &String) {
     let input_rows = input.split("\r\n");
     for row in input_rows {
-        rust::day_three::find_joltage_rating(&row.to_string());
+        aoc2025::day_three::find_joltage_rating(&row.to_string());
     }
 }
 
 fn do_benchmark_new(input: &String, length: usize) {
     let input_rows = input.split("\r\n");
     for row in input_rows {
-        rust::day_three::find_joltage_rating_override(&row.to_string(), length);
+        aoc2025::day_three::find_joltage_rating_override(&row.to_string(), length);
     }
 }
 

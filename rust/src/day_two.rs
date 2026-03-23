@@ -1,5 +1,7 @@
 use std::ops::Range;
 
+use crate::common::parse_range;
+
 pub struct DayResult {
     pub sum: u64,
     pub sum_extra: u64,
@@ -21,20 +23,6 @@ pub fn run(input: &String) -> DayResult {
     }
 
     return result;
-}
-
-fn parse_range(range_as_string: &str) -> Range<u64> {
-    let r: Vec<&str> = range_as_string.split("-").collect();
-    let start = r[0]
-        .to_string()
-        .parse::<u64>()
-        .expect("Should be an integer");
-    let end = r[1]
-        .to_string()
-        .parse::<u64>()
-        .expect("Should be an integer");
-
-    start..end
 }
 
 fn string_into_chunks(input: &String, size: usize) -> Vec<String> {
@@ -123,12 +111,6 @@ fn check_range_extra(range: &Range<u64>) -> u64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn range_is_parsed_correctly() {
-        assert_eq!(11..22, parse_range("11-22"));
-        assert_eq!(9393918461..9393960770, parse_range("9393918461-9393960770"));
-    }
 
     #[test]
     fn day_two_tests_return_expected_result() {
