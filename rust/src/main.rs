@@ -1,11 +1,11 @@
 use std::{env, fs};
 
-use aoc2025::{day_five, day_four, day_one, day_three, day_two};
+use aoc2025::{day_five, day_four, day_one, day_six, day_three, day_two};
 
 // Input is expected to be a txt file with a numeric name eg. "12.txt"
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let path = &args[1];
+    // let args: Vec<String> = env::args().collect();
+    let path = "C:\\Users\\gustafsson\\RustroverProjects\\AoC2025\\PUZZLE_INPUT\\6.txt";
     let input = fs::read_to_string(path).expect("Should have been able to read the file");
     let unix_path = path.replace('\\', "/");
     let filename = unix_path
@@ -43,6 +43,10 @@ fn main() {
         Some("5") => {
             let result = day_five::run(&input);
             println!("Day five: {} & {}", result.total, result.part_two_total);
+        }
+        Some("6") => {
+            let result = day_six::run(&input);
+            println!("Day six: {} & {}", result.total, result.part_two_total);
         }
         _ => {
             println!("Day '{:?}' not implemented", filename)
