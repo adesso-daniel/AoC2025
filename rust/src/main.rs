@@ -1,4 +1,4 @@
-use std::{env, fs};
+use std::fs;
 
 use aoc2025::{day_five, day_four, day_one, day_six, day_three, day_two};
 
